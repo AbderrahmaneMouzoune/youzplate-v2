@@ -8,8 +8,9 @@ import type { GuideSlug } from '@/config/guides'
  * Le panier n'envoie que des slugs et des quantités, le prix est toujours relu
  * ici au moment de créer la session Stripe.
  *
- * Les slugs reprennent ceux de l'ancien site (`/produits/plaque-google`…) pour
- * que les redirections de youzoune.com tombent sur la bonne fiche.
+ * Les slugs suivent les requêtes réellement tapées (« plaque avis google »,
+ * « plaque avis tripadvisor ») ; les anciennes URLs (`/produits/plaque-google`,
+ * `/plaques/plaque-google`) sont redirigées dans `next.config.ts`.
  */
 
 export const PLATFORMS = [
@@ -26,8 +27,20 @@ export type Platform = (typeof PLATFORMS)[number]
 /** Ce que la plaque fait gagner : des avis ou des abonnés. */
 export type PlateGoal = 'avis' | 'abonnes' | 'rendez-vous'
 
+/** Slugs = URL des fiches produit, à la racine du site (`/plaque-avis-google`). */
+export const PLATE_SLUGS = [
+  'plaque-avis-google',
+  'plaque-instagram',
+  'plaque-tiktok',
+  'plaque-avis-tripadvisor',
+  'plaque-doctolib',
+  'plaque-snapchat',
+] as const
+
+export type PlateSlug = (typeof PLATE_SLUGS)[number]
+
 export type Plate = {
-  slug: `plaque-${Platform}`
+  slug: PlateSlug
   platform: Platform
   /** Nom commercial, repris sur Stripe et la facture. */
   name: string
@@ -38,6 +51,10 @@ export type Plate = {
   unitAmount: number
   /** Couleur de marque de la plateforme, utilisée en accent sur la fiche. */
   accent: string
+  /** Fond clair aux couleurs de la plateforme, derrière les visuels. */
+  tint: string
+  /** Libellés de la démo animée (écran du téléphone, notification). */
+  demo: { action: string; toast: string; done: string }
   image: string
   imageAlt: string
   /** Une phrase, affichée sur les cartes du catalogue. */
@@ -64,13 +81,19 @@ const UNIT_AMOUNT = 2990
 
 export const PLATES: Plate[] = [
   {
-    slug: 'plaque-google',
+    slug: 'plaque-avis-google',
     platform: 'google',
     name: 'Plaque avis Google',
     platformLabel: 'Google',
     goal: 'avis',
     unitAmount: UNIT_AMOUNT,
     accent: '#4285F4',
+    tint: '#E8F0FE',
+    demo: {
+      action: 'Publier l’avis',
+      toast: 'Nouvel avis Google ★★★★★',
+      done: 'L’avis est publié',
+    },
     image: '/plaques/google.webp',
     imageAlt:
       'Plaque Youzplate Google « Laissez-nous un avis » avec zone NFC et QR code sur fond bleu',
@@ -94,6 +117,8 @@ export const PLATES: Plate[] = [
     goal: 'abonnes',
     unitAmount: UNIT_AMOUNT,
     accent: '#E4405F',
+    tint: '#FDECF3',
+    demo: { action: 'S’abonner', toast: 'Nouvel abonné Instagram', done: 'Un abonné de plus' },
     image: '/plaques/instagram.webp',
     imageAlt:
       'Plaque Youzplate Instagram « Rejoignez-nous » avec zone NFC et QR code sur fond dégradé orange et rose',
@@ -117,6 +142,8 @@ export const PLATES: Plate[] = [
     goal: 'abonnes',
     unitAmount: UNIT_AMOUNT,
     accent: '#010101',
+    tint: '#ECEDF1',
+    demo: { action: 'Suivre', toast: 'Nouvel abonné TikTok', done: 'Un abonné de plus' },
     image: '/plaques/tiktok.webp',
     imageAlt: 'Plaque Youzplate TikTok avec zone NFC et QR code',
     tagline: 'Faites de chaque client un abonné TikTok.',
@@ -132,13 +159,15 @@ export const PLATES: Plate[] = [
       'Plaque NFC et QR code qui ouvre votre compte TikTok pour gagner des abonnés en boutique. Sans abonnement, lien modifiable, livraison offerte.',
   },
   {
-    slug: 'plaque-tripadvisor',
+    slug: 'plaque-avis-tripadvisor',
     platform: 'tripadvisor',
     name: 'Plaque avis TripAdvisor',
     platformLabel: 'TripAdvisor',
     goal: 'avis',
     unitAmount: UNIT_AMOUNT,
     accent: '#00AF87',
+    tint: '#E3F7EF',
+    demo: { action: 'Envoyer l’avis', toast: 'Nouvel avis TripAdvisor', done: 'L’avis est envoyé' },
     image: '/plaques/tripadvisor.webp',
     imageAlt: 'Plaque Youzplate TripAdvisor avec zone NFC et QR code',
     tagline: 'Des avis TripAdvisor récoltés à table, pas des semaines plus tard.',
@@ -161,6 +190,8 @@ export const PLATES: Plate[] = [
     goal: 'rendez-vous',
     unitAmount: UNIT_AMOUNT,
     accent: '#107ACA',
+    tint: '#E5F2FB',
+    demo: { action: 'Prendre RDV', toast: 'Rendez-vous réservé', done: 'Le rendez-vous est pris' },
     image: '/plaques/doctolib.webp',
     imageAlt: 'Plaque Youzplate Doctolib avec zone NFC et QR code',
     tagline: 'Vos patients reprennent rendez-vous sans appeler le cabinet.',
@@ -183,6 +214,8 @@ export const PLATES: Plate[] = [
     goal: 'abonnes',
     unitAmount: UNIT_AMOUNT,
     accent: '#E7C400',
+    tint: '#FFFBD1',
+    demo: { action: 'Ajouter', toast: 'Nouvel ami Snapchat', done: 'Un ami de plus' },
     image: '/plaques/snapchat.webp',
     imageAlt: 'Plaque Youzplate Snapchat avec zone NFC et QR code sur fond jaune',
     tagline: 'Ajoutez vos clients sur Snapchat en un geste.',
@@ -199,8 +232,6 @@ export const PLATES: Plate[] = [
   },
 ]
 
-export type PlateSlug = Plate['slug']
-
 const PLATES_BY_SLUG = new Map<string, Plate>(PLATES.map((plate) => [plate.slug, plate]))
 
 export function getPlate(slug: string): Plate | undefined {
@@ -209,6 +240,10 @@ export function getPlate(slug: string): Plate | undefined {
 
 export function isPlateSlug(value: string): value is PlateSlug {
   return PLATES_BY_SLUG.has(value)
+}
+
+export function getPlateByPlatform(platform: Platform): Plate {
+  return PLATES.find((plate) => plate.platform === platform)!
 }
 
 export const GOAL_LABELS: Record<PlateGoal, string> = {

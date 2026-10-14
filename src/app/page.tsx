@@ -1,223 +1,282 @@
-import Image from 'next/image'
 import Link from 'next/link'
 
 import { FaqList } from '@/components/faq-list'
 import { GuideCard } from '@/components/guide-card'
+import { HeroPicker } from '@/components/hero-picker'
 import { JsonLd } from '@/components/json-ld'
+import { Packs } from '@/components/packs'
 import { PlateCard } from '@/components/plate-card'
-import { PLATES } from '@/config/catalog'
+import { PlateVisual } from '@/components/plate-visual'
+import { CheckList, PROMISES, SectionHeading } from '@/components/sections'
+import { getPlate, PLATES } from '@/config/catalog'
 import { FAQ } from '@/config/faq'
 import { SITE } from '@/config/site'
+import { FEATURED_METIERS } from '@/data/metiers'
 import { formatPrice } from '@/lib/format'
 
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: { absolute: `${SITE.name} · ${SITE.tagline}` },
+  title: { absolute: 'Plaque avis Google NFC et QR code, sans abonnement | Youzplate' },
   alternates: { canonical: '/' },
 }
 
-const PROMISES = [
-  { title: 'Sans abonnement', text: 'Un seul paiement, scans illimités.' },
-  { title: 'Lien modifiable', text: 'Gratuitement, à vie.' },
-  { title: 'Sans pile ni Wi-Fi', text: 'Rien à brancher ni recharger.' },
-  { title: 'Livraison offerte', text: 'Expédiée sous 48 h ouvrées.' },
-]
-
 const STEPS = [
-  {
-    title: 'Choisissez votre plaque',
-    text: 'Google, Instagram, TikTok, TripAdvisor, Doctolib ou Snapchat : une plaque par objectif, à poser où vos clients passent.',
-  },
-  {
-    title: 'Associez votre lien',
-    text: 'À réception, scannez la plaque et indiquez le lien de votre page. Nos guides vous montrent où le trouver.',
-  },
-  {
-    title: 'Vos clients scannent',
-    text: 'Un geste avec le téléphone, ou le QR code avec l’appareil photo : votre page s’ouvre, l’avis ou l’abonnement suit.',
-  },
+  [
+    'Commandez',
+    'Choisissez votre plateforme. Paiement sécurisé, livraison offerte en 3 à 7 jours ouvrés.',
+  ],
+  [
+    'Activez en 2 minutes',
+    'Scannez la plaque à réception, collez le lien de votre page. Un guide vous montre où le trouver.',
+  ],
+  [
+    'Récoltez',
+    'Un geste du téléphone ou un scan du QR code : la page s’ouvre, l’avis ou l’abonnement suit.',
+  ],
 ]
 
-const REASONS = [
-  {
-    title: 'Le bon moment',
-    text: 'Un client satisfait est prêt à laisser un avis… tant qu’il est encore chez vous. Une fois parti, l’intention retombe. La plaque capte ce moment.',
-  },
-  {
-    title: 'Zéro friction',
-    text: 'Pas de recherche, pas de lien à taper, pas d’application à installer. Chaque étape supprimée, ce sont des avis en plus.',
-  },
-  {
-    title: 'Votre lien, pas le nôtre',
-    text: 'La plaque ouvre directement votre fiche ou votre profil. Vous gardez la main sur la destination et pouvez la changer quand vous voulez.',
-  },
+const COMPARISON = [
+  ['Prix', '29,90 € une fois', 'Abonnement mensuel'],
+  ['NFC + QR code', 'Oui', 'Selon l’offre'],
+  ['Changer de lien', 'Gratuit, à vie', 'Tant que vous payez'],
+  ['Si vous arrêtez de payer', 'Elle continue de marcher', 'Elle peut s’éteindre'],
 ]
 
-const lowestPrice = Math.min(...PLATES.map((plate) => plate.unitAmount))
+const google = getPlate('plaque-avis-google')!
+const instagram = getPlate('plaque-instagram')!
+const tripadvisor = getPlate('plaque-avis-tripadvisor')!
 
 export default function HomePage() {
   return (
     <>
       {/* Hero */}
-      <section className="overflow-hidden bg-gradient-to-b from-brand-50 to-white">
-        <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-16 md:py-24 lg:grid-cols-2">
-          <div>
-            <p className="mb-4 inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-sm font-medium text-brand-700 shadow-sm">
-              <span aria-hidden="true" className="text-star">
+      <section className="overflow-hidden bg-paper">
+        <div className="mx-auto max-w-6xl px-4 py-14 md:py-20">
+          <HeroPicker>
+            <p className="inline-flex items-center gap-2.5 rounded-full border border-line bg-white px-4 py-2 text-sm font-semibold">
+              <span aria-hidden="true" className="tracking-[2px] text-[#E09A00]">
                 ★★★★★
               </span>
               Plaques NFC &amp; QR code
             </p>
-            <h1 className="text-4xl font-extrabold tracking-tight text-balance sm:text-5xl">
-              Plus d’avis, plus d’abonnés, <span className="text-brand-600">sans abonnement.</span>
+            <h1 className="font-display text-[clamp(40px,6vw,64px)] leading-[1.02] font-extrabold tracking-[-0.03em] text-balance">
+              Vos clients contents, transformés en{' '}
+              <span className="text-brand-600">avis 5 étoiles.</span>
             </h1>
-            <p className="mt-5 max-w-xl text-lg text-muted">
-              Posez une Youzplate sur votre comptoir : vos clients laissent un avis Google ou vous
-              suivent sur Instagram en moins de 30 secondes, d’un simple geste avec leur téléphone.
+            <p className="max-w-xl text-lg leading-relaxed text-muted md:text-xl">
+              Une plaque avis Google posée sur votre comptoir. Vos clients approchent leur téléphone
+              ou scannent le QR code : votre page s’ouvre, ils laissent un avis en moins de 30
+              secondes.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                href="/plaques"
-                className="rounded-full bg-brand-600 px-6 py-3 font-semibold text-white shadow-lg shadow-brand-600/25 transition hover:bg-brand-700"
-              >
-                Choisir ma plaque · dès {formatPrice(lowestPrice)}
-              </Link>
-              <Link
-                href="#comment-ca-marche"
-                className="rounded-full border border-line bg-white px-6 py-3 font-semibold transition hover:border-brand-200"
-              >
-                Comment ça marche
-              </Link>
-            </div>
-          </div>
-
-          <div className="relative mx-auto aspect-square w-full max-w-md">
-            <Image
-              src="/plaques/instagram.webp"
-              alt=""
-              width={500}
-              height={500}
-              sizes="(min-width: 1024px) 320px, 60vw"
-              className="absolute top-0 right-0 w-[68%] rotate-6 rounded-3xl shadow-2xl"
-              priority
-            />
-            <Image
-              src="/plaques/google.webp"
-              alt="Plaque Youzplate Google « Laissez-nous un avis » avec zone NFC et QR code"
-              width={500}
-              height={500}
-              sizes="(min-width: 1024px) 340px, 65vw"
-              className="absolute bottom-0 left-0 w-[72%] -rotate-3 rounded-3xl shadow-2xl"
-              priority
-            />
-          </div>
-        </div>
-
-        <ul className="mx-auto grid max-w-6xl grid-cols-2 gap-4 px-4 pb-14 md:grid-cols-4">
-          {PROMISES.map((promise) => (
-            <li key={promise.title} className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-line">
-              <p className="font-semibold">{promise.title}</p>
-              <p className="text-sm text-muted">{promise.text}</p>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      {/* Catalogue */}
-      <section id="plaques" className="mx-auto max-w-6xl px-4 py-16">
-        <SectionHeading
-          eyebrow="Les plaques"
-          title="Une plaque pour chaque objectif"
-          text="Des avis pour rassurer, des abonnés pour fidéliser, des rendez-vous pour remplir l’agenda."
-        />
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {PLATES.map((plate) => (
-            <PlateCard key={plate.slug} plate={plate} />
-          ))}
+          </HeroPicker>
+          <CheckList items={PROMISES} className="mt-10 text-[#33364F]" />
         </div>
       </section>
 
       {/* Comment ça marche */}
-      <section id="comment-ca-marche" className="scroll-mt-20 bg-brand-900 text-white">
-        <div className="mx-auto max-w-6xl px-4 py-20">
-          <SectionHeading eyebrow="Comment ça marche" title="Prête en trois étapes" dark />
-          <ol className="grid gap-6 md:grid-cols-3">
-            {STEPS.map((step, index) => (
-              <li key={step.title} className="rounded-2xl bg-white/5 p-6 ring-1 ring-white/10">
-                <span className="mb-4 grid size-10 place-items-center rounded-full bg-star font-bold text-ink">
-                  {index + 1}
-                </span>
-                <h3 className="mb-2 text-lg font-semibold">{step.title}</h3>
-                <p className="text-brand-100">{step.text}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
-      {/* Pourquoi */}
-      <section className="mx-auto max-w-6xl px-4 py-20">
+      <section
+        id="comment-ca-marche"
+        className="mx-auto max-w-6xl scroll-mt-28 px-4 py-20 md:py-24"
+      >
         <SectionHeading
-          eyebrow="Pourquoi ça marche"
-          title="Un avis se demande au bon moment"
-          text="La plupart des clients satisfaits ne laissent jamais d’avis. Pas par manque d’envie : par manque d’occasion."
+          eyebrow="Comment ça marche"
+          title="Un client content repart sans rien dire. Un client mécontent, lui, écrit."
+          text="La plaque rééquilibre la balance : elle demande l’avis au bon moment, quand votre client est encore devant vous."
         />
-        <div className="grid gap-6 md:grid-cols-3">
-          {REASONS.map((reason) => (
-            <div key={reason.title} className="rounded-2xl border border-line p-6">
-              <h3 className="mb-2 text-lg font-semibold">{reason.title}</h3>
-              <p className="text-muted">{reason.text}</p>
-            </div>
+        <ol className="grid gap-6 md:grid-cols-3">
+          {STEPS.map(([title, text], index) => (
+            <li key={title} className="flex flex-col gap-3.5 rounded-3xl bg-paper p-8">
+              <span className="grid size-11 place-items-center rounded-full bg-star text-lg font-extrabold">
+                {index + 1}
+              </span>
+              <h3 className="font-display text-2xl font-extrabold">{title}</h3>
+              <p className="leading-relaxed text-muted">{text}</p>
+            </li>
           ))}
+        </ol>
+      </section>
+
+      {/* Catalogue */}
+      <section id="plaques" className="bg-paper">
+        <div className="mx-auto max-w-6xl px-4 py-20 md:py-24">
+          <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <p className="mb-2 text-sm font-bold tracking-[0.12em] text-brand-600 uppercase">
+                Les plaques
+              </p>
+              <h2 className="font-display text-[clamp(30px,4vw,44px)] font-extrabold tracking-tight">
+                Une plaque par objectif
+              </h2>
+            </div>
+            <p className="max-w-md text-muted">
+              NFC + QR code sur chaque plaque. Toutes à {formatPrice(google.unitAmount)}, scans
+              illimités, lien modifiable gratuitement.
+            </p>
+          </div>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {PLATES.map((plate) => (
+              <PlateCard key={plate.slug} plate={plate} />
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* Guides */}
+      {/* Packs */}
+      <section id="packs" className="mx-auto max-w-6xl scroll-mt-28 px-4 py-20 md:py-24">
+        <SectionHeading
+          eyebrow="Packs"
+          title="Couvrez tout votre établissement"
+          text="Une plaque au comptoir, une sur les tables, une en vitrine : plus de points de contact, plus d’avis."
+        />
+        <Packs />
+      </section>
+
+      {/* Comparatif */}
       <section className="bg-paper">
-        <div className="mx-auto max-w-6xl px-4 py-20">
-          <SectionHeading
-            eyebrow="Guides"
-            title="Trouvez le bon lien à associer"
-            text="Lien d’avis Google, page TripAdvisor, nom d’utilisateur Instagram… nos guides détaillent chaque plateforme, étape par étape."
-          />
-          <div className="grid gap-6 md:grid-cols-3">
-            <GuideCard slug="recuperer-lien-google-business" eyebrow="Google" />
-            <GuideCard slug="trouver-nom-utilisateur-instagram" eyebrow="Instagram" />
-            <GuideCard slug="trouver-lien-tripadvisor" eyebrow="TripAdvisor" />
+        <div className="mx-auto max-w-4xl px-4 py-20 md:py-24">
+          <SectionHeading title="Pourquoi payer tous les mois pour un lien ?" />
+          <div className="overflow-x-auto rounded-3xl border border-line bg-white">
+            <table className="w-full min-w-[560px] border-collapse">
+              <thead>
+                <tr>
+                  <th scope="col" className="p-5 text-left" />
+                  <th scope="col" className="p-5 font-display text-xl text-brand-600">
+                    Youzplate
+                  </th>
+                  <th scope="col" className="p-5 font-semibold text-muted">
+                    Plaques sur abonnement
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {COMPARISON.map(([label, ours, theirs]) => (
+                  <tr key={label} className="border-t border-line">
+                    <th scope="row" className="p-5 text-left font-medium">
+                      {label}
+                    </th>
+                    <td className="p-5 text-center font-bold">{ours}</td>
+                    <td className="p-5 text-center text-muted">{theirs}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-          <p className="mt-8 text-center">
-            <Link href="/guides" className="font-semibold text-brand-600 hover:underline">
-              Tous les guides →
+          <p className="mt-5 text-center text-muted">
+            Vous hésitez avec une plaque importée ?{' '}
+            <Link
+              href="/plaque-avis-google-francaise"
+              className="font-semibold text-brand-600 underline"
+            >
+              Lisez notre comparatif honnête
             </Link>
+            .
           </p>
         </div>
       </section>
 
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-3xl scroll-mt-20 px-4 py-20">
-        <SectionHeading eyebrow="FAQ" title="Questions fréquentes" />
-        <FaqList items={FAQ} />
-        <p className="mt-6 text-center text-muted">
-          Une autre question ?{' '}
-          <a href={`mailto:${SITE.contact.email}`} className="font-semibold text-brand-600">
-            {SITE.contact.email}
-          </a>
-        </p>
+      {/* Par métier */}
+      <section className="mx-auto max-w-6xl px-4 py-20 md:py-24">
+        <SectionHeading
+          eyebrow="Par métier"
+          title="Où la poser, quand la proposer, quoi dire"
+          text="Un guide par métier, pour tirer le maximum de votre plaque dès le premier jour."
+        />
+        <ul className="flex flex-wrap justify-center gap-3">
+          {FEATURED_METIERS.map((metier) => (
+            <li key={metier.path}>
+              <Link
+                href={metier.path}
+                className="inline-flex min-h-12 items-center rounded-full border border-[#D3D5E6] px-5 font-semibold transition hover:border-brand-500 hover:text-brand-700"
+              >
+                {metier.name}
+              </Link>
+            </li>
+          ))}
+          <li>
+            <Link
+              href="/metiers"
+              className="inline-flex min-h-12 items-center rounded-full bg-ink px-5 font-bold text-white"
+            >
+              Tous les métiers →
+            </Link>
+          </li>
+        </ul>
+      </section>
+
+      {/* Garantie + FAQ */}
+      <section id="faq" className="scroll-mt-28 bg-paper">
+        <div className="mx-auto grid max-w-6xl gap-12 px-4 py-20 md:py-24 lg:grid-cols-[1fr_1.4fr]">
+          <div className="space-y-5">
+            <h2 className="font-display text-[clamp(30px,4vw,40px)] leading-tight font-extrabold tracking-tight">
+              Les questions qu’on nous pose avant d’acheter
+            </h2>
+            <div className="flex items-start gap-4 rounded-3xl bg-white p-7">
+              <svg
+                width="40"
+                height="40"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="var(--color-brand-600)"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+                className="shrink-0"
+              >
+                <path d="M12 3l7 3v6c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6z" />
+                <path d="M9 12l2 2 4-4" />
+              </svg>
+              <div>
+                <p className="mb-1.5 text-lg font-bold">Garantie Youzplate</p>
+                <p className="leading-relaxed text-muted">
+                  Plaque défectueuse remplacée gratuitement. Lien modifiable à vie, même si vous
+                  changez de fiche ou d’établissement.
+                </p>
+              </div>
+            </div>
+            <GuideCard slug="recuperer-lien-google-business" eyebrow="Guide" />
+            <p className="text-muted">
+              Une autre question ?{' '}
+              <a href={`mailto:${SITE.contact.email}`} className="font-semibold text-brand-600">
+                {SITE.contact.email}
+              </a>{' '}
+              · {SITE.contact.phone}
+            </p>
+          </div>
+          <FaqList items={FAQ} />
+        </div>
       </section>
 
       {/* CTA final */}
-      <section className="mx-auto max-w-6xl px-4">
-        <div className="flex flex-col items-center gap-6 rounded-3xl bg-brand-600 px-6 py-14 text-center text-white">
-          <h2 className="max-w-2xl text-3xl font-bold text-balance">
-            Vos clients sont contents. Donnez-leur un moyen de le dire.
-          </h2>
-          <Link
-            href="/plaques"
-            className="rounded-full bg-white px-6 py-3 font-semibold text-brand-700 transition hover:bg-brand-50"
-          >
-            Voir les plaques
-          </Link>
+      <section className="mx-auto max-w-6xl px-4 pt-20">
+        <div className="flex flex-wrap items-center justify-between gap-10 overflow-hidden rounded-[36px] bg-brand-600 p-8 text-white sm:p-14">
+          <div className="min-w-0 flex-[1_1_420px] space-y-6">
+            <h2 className="font-display text-[clamp(32px,4.5vw,48px)] leading-[1.05] font-extrabold tracking-tight">
+              Vos clients sont contents. Donnez-leur un moyen de le dire.
+            </h2>
+            <Link
+              href={`/${google.slug}`}
+              className="inline-flex min-h-15 items-center rounded-full bg-star px-8 text-lg font-extrabold text-ink"
+            >
+              Commander ma plaque · {formatPrice(google.unitAmount)}
+            </Link>
+          </div>
+          <div className="mx-auto flex items-center" aria-hidden="true">
+            <PlateVisual
+              plate={instagram}
+              size={170}
+              decorative
+              className="translate-x-8 -rotate-[8deg]"
+            />
+            <PlateVisual plate={google} size={200} decorative className="z-10 rotate-[4deg]" />
+            <PlateVisual
+              plate={tripadvisor}
+              size={170}
+              decorative
+              className="-translate-x-8 rotate-[10deg]"
+            />
+          </div>
         </div>
       </section>
 
@@ -233,29 +292,5 @@ export default function HomePage() {
         }}
       />
     </>
-  )
-}
-
-function SectionHeading({
-  eyebrow,
-  title,
-  text,
-  dark = false,
-}: {
-  eyebrow: string
-  title: string
-  text?: string
-  dark?: boolean
-}) {
-  return (
-    <div className="mx-auto mb-10 max-w-2xl text-center">
-      <p
-        className={`mb-2 text-sm font-semibold tracking-wide uppercase ${dark ? 'text-star' : 'text-brand-600'}`}
-      >
-        {eyebrow}
-      </p>
-      <h2 className="text-3xl font-bold tracking-tight text-balance">{title}</h2>
-      {text && <p className={`mt-3 ${dark ? 'text-brand-100' : 'text-muted'}`}>{text}</p>}
-    </div>
   )
 }

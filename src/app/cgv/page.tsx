@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import { LegalPage } from '@/components/legal-page'
 import { LEGAL_ENTITY, SHIPPING, SITE } from '@/config/site'
 
@@ -73,7 +75,7 @@ export default function TermsOfSalePage() {
       <h2>8. Données personnelles</h2>
       <p>
         Les données collectées lors de la commande servent à son traitement, à la livraison et à la
-        facturation. Voir notre <a href="/confidentialite">politique de confidentialité</a>.
+        facturation. Voir notre <Link href="/confidentialite">politique de confidentialité</Link>.
       </p>
 
       <h2>9. Litiges</h2>

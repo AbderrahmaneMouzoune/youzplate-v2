@@ -3,10 +3,11 @@ import { describe, expect, test } from 'bun:test'
 import { getPlate } from '@/config/catalog'
 import { SHIPPING } from '@/config/site'
 import { buildCheckoutSessionParams } from '@/lib/checkout'
+import { discountedUnitAmount } from '@/lib/pricing'
 
 describe('buildCheckoutSessionParams', () => {
   const params = buildCheckoutSessionParams([
-    { slug: 'plaque-google', quantity: 3 },
+    { slug: 'plaque-avis-google', quantity: 3 },
     { slug: 'plaque-instagram', quantity: 1 },
   ])
 
@@ -14,7 +15,11 @@ describe('buildCheckoutSessionParams', () => {
     expect(params.line_items).toHaveLength(2)
     const [google] = params.line_items!
     expect(google.quantity).toBe(3)
-    expect(google.price_data?.unit_amount).toBe(getPlate('plaque-google')!.unitAmount)
+    // 4 plaques au total : palier −10 %, intégré au prix unitaire.
+    expect(google.price_data?.unit_amount).toBe(
+      discountedUnitAmount(getPlate('plaque-avis-google')!.unitAmount, 4)
+    )
+    expect(google.price_data?.product_data?.description).toContain('Pack Duo')
     expect(google.price_data?.currency).toBe('eur')
     expect(google.price_data?.product_data?.images?.[0]).toBe(
       'https://youzplate.test/plaques/google.webp'
@@ -34,5 +39,6 @@ describe('buildCheckoutSessionParams', () => {
     )
     expect(params.cancel_url).toBe('https://youzplate.test/panier')
     expect(params.metadata?.cart).toBe('googlex3,instagramx1')
+    expect(params.metadata?.volume_tier).toBe('Pack Duo')
   })
 })

@@ -9,7 +9,7 @@ export default function NotFound() {
         Le lien est peut-être ancien. Nos plaques, elles, sont bien là.
       </p>
       <Link
-        href="/plaques"
+        href="/plaque-nfc"
         className="mt-8 inline-block rounded-full bg-brand-600 px-6 py-3 font-semibold text-white"
       >
         Voir les plaques

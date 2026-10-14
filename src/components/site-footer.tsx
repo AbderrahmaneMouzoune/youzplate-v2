@@ -3,12 +3,13 @@ import Link from 'next/link'
 import { Logo } from '@/components/logo'
 import { PLATES } from '@/config/catalog'
 import { SHIPPING, SITE, YOUZOUNE_URL } from '@/config/site'
+import { FEATURED_METIERS } from '@/data/metiers'
 
 export function SiteFooter() {
   return (
     <footer className="mt-24 border-t border-line bg-paper">
-      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="space-y-3">
+      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="space-y-3 lg:col-span-1">
           <Logo />
           <p className="text-sm text-muted">
             Des plaques NFC et QR code qui transforment vos clients satisfaits en avis et en
@@ -25,14 +26,36 @@ export function SiteFooter() {
         <FooterColumn title="Les plaques">
           {PLATES.map((plate) => (
             <li key={plate.slug}>
-              <Link href={`/plaques/${plate.slug}`}>{plate.name}</Link>
+              <Link href={`/${plate.slug}`}>{plate.name}</Link>
             </li>
           ))}
+          <li>
+            <Link href="/plaque-avis-google-instagram">Pack Google + Instagram</Link>
+          </li>
+        </FooterColumn>
+
+        <FooterColumn title="Par métier">
+          {FEATURED_METIERS.map((metier) => (
+            <li key={metier.path}>
+              <Link href={metier.path}>{metier.name}</Link>
+            </li>
+          ))}
+          <li>
+            <Link href="/metiers" className="font-semibold">
+              Tous les métiers
+            </Link>
+          </li>
         </FooterColumn>
 
         <FooterColumn title="Aide">
           <li>
+            <Link href="/qr-code-avis-google">QR code avis Google gratuit</Link>
+          </li>
+          <li>
             <Link href="/guides">Guides de configuration</Link>
+          </li>
+          <li>
+            <Link href="/plaque-avis-google-francaise">Plaque française ou importée ?</Link>
           </li>
           <li>
             <Link href="/#faq">Questions fréquentes</Link>
@@ -57,7 +80,7 @@ export function SiteFooter() {
           </li>
         </FooterColumn>
       </div>
-      <p className="border-t border-line py-5 text-center text-xs text-muted">
+      <p className="border-t border-line px-4 py-5 text-center text-xs text-muted">
         Paiement sécurisé par Stripe · Livraison offerte : {SHIPPING.zoneLabel}
       </p>
     </footer>

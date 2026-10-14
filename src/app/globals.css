@@ -1,24 +1,25 @@
 @import 'tailwindcss';
 
 @theme {
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-instrument), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
 
   /* Indigo des plaques imprimées, décliné. */
-  --color-brand-50: #eef0fb;
-  --color-brand-100: #dde1f6;
-  --color-brand-200: #b9c0ec;
+  --color-brand-50: #f1f2fd;
+  --color-brand-100: #e6e8fb;
+  --color-brand-200: #c3c6e4;
   --color-brand-500: #4a55b8;
-  --color-brand-600: #3e4aa8;
-  --color-brand-700: #323c8c;
-  --color-brand-900: #1d2356;
+  --color-brand-600: #3b44b8;
+  --color-brand-700: #262c80;
+  --color-brand-900: #14162e;
   /* Bleu Youzoune, pour les liens vers la vitrine. */
   --color-youzoune: #0033cc;
-  /* Jaune des étoiles d'avis. */
-  --color-star: #f5b400;
-  --color-ink: #0f172a;
-  --color-muted: #475569;
-  --color-line: #e2e8f0;
-  --color-paper: #f8fafc;
+  /* Jaune des étoiles d'avis, et des appels à l'action secondaires. */
+  --color-star: #ffb800;
+  --color-ink: #14162e;
+  --color-muted: #4a4d68;
+  --color-line: #e3e4ef;
+  --color-paper: #f5f5fa;
 }
 
 html {
@@ -36,8 +37,83 @@ body {
   outline-offset: 2px;
 }
 
+/* Démo animée de la plaque (TapScene). */
+@keyframes yzp-tap {
+  0%,
+  12% {
+    transform: translate(40%, 18%) rotate(14deg);
+  }
+  38%,
+  62% {
+    transform: translate(0, 0) rotate(8deg);
+  }
+  86%,
+  100% {
+    transform: translate(40%, 18%) rotate(14deg);
+  }
+}
+@keyframes yzp-wave {
+  0%,
+  30% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  45% {
+    opacity: 1;
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(1.25);
+  }
+}
+@keyframes yzp-toast {
+  0%,
+  44% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+  }
+  52%,
+  88% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+@keyframes yzp-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+.yzp-phone {
+  animation: yzp-tap 4.2s cubic-bezier(0.45, 0, 0.2, 1) infinite;
+}
+.yzp-wave {
+  animation: yzp-wave 4.2s ease-out infinite;
+  transform-origin: center;
+}
+.yzp-toast {
+  animation: yzp-toast 4.2s ease-out infinite;
+}
+.yzp-float {
+  animation: yzp-float 6s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+  .yzp-phone,
+  .yzp-wave,
+  .yzp-toast,
+  .yzp-float {
+    animation: none;
   }
 }

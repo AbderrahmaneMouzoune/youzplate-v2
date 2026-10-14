@@ -1,5 +1,6 @@
 import { SHIPPING, SITE } from '@/config/site'
 import { priceCart, type CartLine } from '@/lib/cart'
+import { formatRate } from '@/lib/pricing'
 
 import type Stripe from 'stripe'
 
@@ -10,19 +11,22 @@ import type Stripe from 'stripe'
  * joue la règle « le prix vient du serveur, jamais du navigateur ».
  */
 export function buildCheckoutSessionParams(cart: CartLine[]): Stripe.Checkout.SessionCreateParams {
-  const { lines } = priceCart(cart)
+  const { lines, tier } = priceCart(cart)
+  // La remise de volume est intégrée au prix unitaire : elle reste compatible
+  // avec les codes promo Stripe, que l'on ne peut pas cumuler avec `discounts`.
+  const tierNote = tier ? ` ${tier.label} : ${formatRate(tier.rate)} appliqué.` : ''
 
   return {
     mode: 'payment',
     locale: 'fr',
-    line_items: lines.map(({ plate, quantity }) => ({
+    line_items: lines.map(({ plate, quantity, unitAmount }) => ({
       quantity,
       price_data: {
         currency: 'eur',
-        unit_amount: plate.unitAmount,
+        unit_amount: unitAmount,
         product_data: {
           name: plate.name,
-          description: plate.tagline,
+          description: `${plate.tagline}${tierNote}`,
           images: [`${SITE.url}${plate.image}`],
           metadata: { slug: plate.slug, platform: plate.platform },
         },
@@ -60,6 +64,7 @@ export function buildCheckoutSessionParams(cart: CartLine[]): Stripe.Checkout.Se
     // Résumé lisible dans le dashboard Stripe, sans avoir à ouvrir les lignes.
     metadata: {
       cart: lines.map(({ plate, quantity }) => `${plate.platform}x${quantity}`).join(','),
+      volume_tier: tier ? tier.label : 'aucun',
     },
     success_url: `${SITE.url}/commande/confirmation?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${SITE.url}/panier`,

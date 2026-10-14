@@ -1,21 +1,31 @@
-import { Inter } from 'next/font/google'
+import { Bricolage_Grotesque, Instrument_Sans } from 'next/font/google'
 
+import { JsonLd } from '@/components/json-ld'
 import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
-import { SITE } from '@/config/site'
+import { LEGAL_ENTITY, SITE, YOUZOUNE_URL } from '@/config/site'
 import { env } from '@/env'
 
 import type { Metadata, Viewport } from 'next'
 
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
+const display = Bricolage_Grotesque({
+  subsets: ['latin'],
+  weight: ['500', '700', '800'],
+  variable: '--font-bricolage',
+})
+const body = Instrument_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-instrument',
+})
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: {
     default: `${SITE.name} · ${SITE.tagline}`,
-    template: `%s · ${SITE.name}`,
+    template: `%s | ${SITE.name}`,
   },
   description: SITE.description,
   applicationName: SITE.name,
@@ -30,12 +40,12 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#3e4aa8',
+  themeColor: '#3b44b8',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className={inter.variable}>
+    <html lang="fr" className={`${display.variable} ${body.variable}`}>
       <body className="flex min-h-dvh flex-col font-sans">
         <a
           href="#contenu"
@@ -48,6 +58,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
         </main>
         <SiteFooter />
+        <JsonLd
+          data={{
+            '@context': 'https://schema.org',
+            '@type': 'Organization',
+            name: SITE.name,
+            url: SITE.url,
+            logo: `${SITE.url}/plaques/google.webp`,
+            email: SITE.contact.email,
+            telephone: '+33744319570',
+            parentOrganization: {
+              '@type': 'Organization',
+              name: LEGAL_ENTITY.tradeName,
+              url: YOUZOUNE_URL,
+            },
+          }}
+        />
       </body>
     </html>
   )
