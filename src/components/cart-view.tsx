@@ -7,7 +7,7 @@ import { startCheckout, type CheckoutState } from '@/app/actions/checkout'
 import { PlateVisual } from '@/components/plate-visual'
 import { QuantityInput } from '@/components/quantity-input'
 import { PLATES } from '@/config/catalog'
-import { CART_LIMITS, SHIPPING } from '@/config/site'
+import { CART_LIMITS, SHIPPING, VAT_MENTION } from '@/config/site'
 import { priceCart } from '@/lib/cart'
 import { cart, useCart } from '@/lib/cart-store'
 import { formatPrice } from '@/lib/format'
@@ -199,7 +199,7 @@ export function CartView() {
             </dd>
           </div>
           <div className="flex justify-between border-t border-line pt-2.5 text-lg font-extrabold">
-            <dt>Total TTC</dt>
+            <dt>Total</dt>
             <dd>{formatPrice(priced.total + SHIPPING.amount)}</dd>
           </div>
         </dl>
@@ -236,9 +236,9 @@ export function CartView() {
           </p>
         )}
         <p className="text-xs leading-relaxed text-muted">
-          Carte, Apple Pay ou Google Pay via Stripe. Code promo et numéro de TVA à l’étape suivante.
-          Rien à préparer maintenant : vous associerez votre lien en scannant la plaque à réception.
-          En payant, vous acceptez nos{' '}
+          {VAT_MENTION}. Carte, Apple Pay ou Google Pay via Stripe. Code promo et numéro de TVA à
+          l’étape suivante. Rien à préparer maintenant : vous associerez votre lien en scannant la
+          plaque à réception. En payant, vous acceptez nos{' '}
           <Link href="/cgv" className="underline">
             conditions générales de vente
           </Link>

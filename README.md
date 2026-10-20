@@ -72,11 +72,13 @@ sitemap et le maillage se mettent à jour seuls. Le contenu doit rester propre a
 
 ## À valider avant le lancement
 
-- [ ] **Prix** : 29,90 € TTC l'unité est provisoire (`UNIT_AMOUNT` dans `catalog.ts`), l'ancien
-      prix vivait dans Strapi. Paliers de remise à confirmer dans `pricing.ts`.
-- [ ] **TVA** : prix affichés TTC ; vérifier le régime (franchise en base ou TVA collectée) et
-      l'activer dans Stripe Tax si besoin.
-- [ ] **CGV** (`src/app/cgv/page.tsx`) : trame à faire relire, nommer le médiateur de la consommation.
+- [x] **Prix** : 29,90 € l'unité (`UNIT_AMOUNT` dans `catalog.ts`), −10 % dès 2 plaques, −20 %
+      dès 5 (`pricing.ts`).
+- [x] **TVA** : micro-entreprise en franchise en base, prix nets. La mention `VAT_MENTION`
+      (`src/config/site.ts`) est affichée avec les prix et ajoutée en pied des factures Stripe.
+      Ne pas activer Stripe Tax.
+- [ ] **Médiateur de la consommation** : adhérer à un médiateur agréé puis renseigner
+      `CONSUMER_MEDIATOR` dans `src/config/site.ts` (affiché dans les CGV).
 - [ ] **Livraison** : pays desservis et délais dans `SHIPPING` (`src/config/site.ts`).
 
 ## Plaques physiques

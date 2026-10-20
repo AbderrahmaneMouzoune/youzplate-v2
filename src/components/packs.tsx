@@ -28,7 +28,7 @@ const PACKS = [
     name: 'Établissement',
     quantity: 5,
     text: '5 plaques à répartir comme vous voulez.',
-    points: ['Comptoir, tables, vitrine', 'Panachage libre', 'Facture avec TVA'],
+    points: ['Comptoir, tables, vitrine', 'Panachage libre', 'Facture au nom de l’entreprise'],
     href: '/plaque-avis-google#acheter',
     cta: 'Équiper mon établissement',
   },

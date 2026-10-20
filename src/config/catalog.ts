@@ -47,7 +47,7 @@ export type Plate = {
   /** Nom de la plateforme seule, pour les phrases (« votre page Google »). */
   platformLabel: string
   goal: PlateGoal
-  /** Prix unitaire TTC en centimes. */
+  /** Prix unitaire en centimes, prix final payé (TVA non applicable, voir `VAT_MENTION`). */
   unitAmount: number
   /** Couleur de marque de la plateforme, utilisée en accent sur la fiche. */
   accent: string
@@ -72,10 +72,7 @@ export type Plate = {
 }
 
 /**
- * Prix unitaire commun aux six plaques.
- *
- * TODO(prix) : l'ancien prix vivait dans Strapi (admin.youzoune.com), inaccessible
- * au moment de la refonte. Valeur provisoire à confirmer avant la mise en ligne.
+ * Prix unitaire commun aux six plaques, validé pour le lancement.
  */
 const UNIT_AMOUNT = 2990
 

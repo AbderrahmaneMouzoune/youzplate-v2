@@ -3,7 +3,6 @@
  * toutes plateformes confondues (un Google + un Instagram = pack Duo).
  *
  * Paliers du plus haut au plus bas : le premier atteint s'applique.
- * TODO(prix) : paliers proposés dans la maquette, à confirmer.
  */
 export const VOLUME_TIERS = [
   { minQuantity: 5, rate: 0.2, label: 'Pack Établissement' },
