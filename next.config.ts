@@ -2,6 +2,8 @@
 import './src/env-defaults'
 import './src/env'
 
+import { withPostHogConfig } from '@posthog/nextjs-config'
+
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
@@ -61,4 +63,24 @@ const nextConfig: NextConfig = {
   },
 }
 
-export default nextConfig
+/**
+ * Envoi des source maps à PostHog au build, pour que l'Error tracking affiche
+ * le code source plutôt que le JavaScript minifié. Actif seulement quand la clé
+ * est fournie (Vercel) : les builds locaux et la CI tournent sans.
+ * Clé personnelle PostHog, scopes « error tracking : write » et « organization : read ».
+ */
+const posthogApiKey = process.env.POSTHOG_PERSONAL_API_KEY
+
+export default posthogApiKey
+  ? withPostHogConfig(nextConfig, {
+      personalApiKey: posthogApiKey,
+      projectId: process.env.POSTHOG_PROJECT_ID ?? '317737',
+      host: 'https://eu.posthog.com',
+      sourcemaps: {
+        releaseName: 'youzplate',
+        releaseVersion: process.env.VERCEL_GIT_COMMIT_SHA,
+        // Les .map ne sont pas servis publiquement : le code source reste privé.
+        deleteAfterUpload: true,
+      },
+    })
+  : nextConfig

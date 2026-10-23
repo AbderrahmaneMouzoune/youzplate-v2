@@ -70,6 +70,8 @@ sitemap et le maillage se mettent à jour seuls. Le contenu doit rester propre a
 5. **Search Console** : déclarer le domaine et le sitemap `https://<domaine>/sitemap.xml`.
 6. **PostHog** : `NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN` (clé publique `phc_…` du projet Youzplate,
    eu.posthog.com → Project settings), en Production et Preview. Lue au build : redéployer après.
+   Pour des erreurs lisibles (source maps) : `POSTHOG_PERSONAL_API_KEY`, clé personnelle avec les
+   scopes « Error tracking: Write » et « Organization: Read ». Une clé invalide fait échouer le build.
 7. **Vitrine** : renseigner `NEXT_PUBLIC_YOUZPLATE_URL` sur youzoune-vitrine pour que les
    anciennes URLs (`/youzplate`, `/produits/plaque-*`) et les articles renvoient vers la boutique.
 
