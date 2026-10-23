@@ -18,7 +18,7 @@ import {
 } from '@/components/sections'
 import { GOAL_LABELS, getPlate, PLATES, type Plate } from '@/config/catalog'
 import { FAQ } from '@/config/faq'
-import { SHIPPING, SITE } from '@/config/site'
+import { SHIPPING, SITE, VAT_MENTION } from '@/config/site'
 import { metierPath, metiersForPlate } from '@/data/metiers'
 import { formatPrice } from '@/lib/format'
 
@@ -87,9 +87,10 @@ export default async function PlatePage({ params }: Props) {
             <p className="font-display text-3xl font-extrabold">
               {formatPrice(plate.unitAmount)}
               <span className="ml-2 font-sans text-base font-normal text-muted">
-                TTC l’unité · sans abonnement
+                l’unité · sans abonnement
               </span>
             </p>
+            <p className="-mt-2 text-xs text-muted">{VAT_MENTION}</p>
           </div>
 
           <PlatformLinks current={plate} />

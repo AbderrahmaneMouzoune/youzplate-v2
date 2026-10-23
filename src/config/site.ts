@@ -35,7 +35,20 @@ export const LEGAL_ENTITY = {
   publicationDirector: 'Ahmed Mouzoune',
 } as const
 
-export const LEGAL_LAST_UPDATED = '2026-10-14'
+/**
+ * Micro-entreprise en franchise en base de TVA : les prix sont des prix nets, sans
+ * TVA. Cette mention doit figurer sur les factures et accompagner les prix.
+ */
+export const VAT_MENTION = 'TVA non applicable, art. 293 B du CGI'
+
+/**
+ * Médiateur de la consommation auquel l'entreprise adhère (art. L612-1 du Code de la
+ * consommation). Son nom et ses coordonnées doivent figurer dans les CGV.
+ * TODO(juridique) : renseigner après adhésion, `null` en attendant.
+ */
+export const CONSUMER_MEDIATOR: { name: string; url: string; address: string } | null = null
+
+export const LEGAL_LAST_UPDATED = '2026-10-20'
 
 /** Livraison : une seule offre, affichée sur les fiches et appliquée au checkout. */
 export const SHIPPING = {

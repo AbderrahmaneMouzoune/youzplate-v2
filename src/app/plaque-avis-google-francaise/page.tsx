@@ -39,7 +39,7 @@ const QUESTIONS = [
     'Trouver le bon lien d’avis n’a rien d’évident. Un vendeur qui répond en français vous fait gagner du temps.',
   ],
   [
-    'Recevez-vous une facture avec TVA ?',
+    'Recevez-vous une facture ?',
     'Indispensable pour passer l’achat dans les charges de votre entreprise.',
   ],
 ]
@@ -47,7 +47,7 @@ const QUESTIONS = [
 const TABLE = [
   [
     'Prix',
-    `${formatPrice(plate.unitAmount)} TTC, une fois`,
+    `${formatPrice(plate.unitAmount)}, une fois`,
     'Souvent plus bas, variable',
     'Mensualité',
   ],
@@ -70,7 +70,7 @@ const TABLE = [
     'Selon l’offre',
   ],
   ['Aide à la configuration', 'Guides + support en français', 'Variable', 'Selon l’offre'],
-  ['Facture avec TVA', 'Oui', 'Variable', 'Oui'],
+  ['Facture française', 'Oui', 'Variable', 'Oui'],
 ]
 
 const FAQ = [

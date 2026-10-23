@@ -1,4 +1,4 @@
-import { SHIPPING, SITE } from '@/config/site'
+import { SHIPPING, SITE, VAT_MENTION } from '@/config/site'
 import { priceCart, type CartLine } from '@/lib/cart'
 import { formatRate } from '@/lib/pricing'
 
@@ -59,7 +59,7 @@ export function buildCheckoutSessionParams(cart: CartLine[]): Stripe.Checkout.Se
     billing_address_collection: 'required',
     // Clientèle majoritairement professionnelle : numéro de TVA et facture PDF.
     tax_id_collection: { enabled: true },
-    invoice_creation: { enabled: true },
+    invoice_creation: { enabled: true, invoice_data: { footer: VAT_MENTION } },
     allow_promotion_codes: true,
     // Résumé lisible dans le dashboard Stripe, sans avoir à ouvrir les lignes.
     metadata: {
