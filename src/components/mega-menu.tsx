@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
+import posthog from 'posthog-js'
 import { useEffect, useRef, useState, type MouseEvent } from 'react'
 
 import { RESOURCES, type NavData } from '@/components/nav-data'
@@ -27,6 +28,8 @@ export function MegaMenu({ data }: { data: NavData }) {
   const [open, setOpen] = useState<PanelId | null>(null)
   const rootRef = useRef<HTMLDivElement>(null)
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  // Panneau ouvert par le survol : le clic de la souris qui suit ne doit pas le refermer.
+  const hoverOpened = useRef<PanelId | null>(null)
 
   useEffect(() => {
     if (!open) return
@@ -54,6 +57,11 @@ export function MegaMenu({ data }: { data: NavData }) {
     cancelClose()
     closeTimer.current = setTimeout(() => setOpen(null), HOVER_CLOSE_DELAY)
   }
+  const openPanel = (id: PanelId, trigger: 'click' | 'hover') => {
+    hoverOpened.current = trigger === 'hover' ? id : null
+    setOpen(id)
+    posthog.capture('nav_menu_opened', { menu: 'desktop', panel: id, trigger })
+  }
   // Un lien choisi ferme le menu : la navigation client ne recharge pas le header.
   const closeOnLink = (event: MouseEvent) => {
     if ((event.target as HTMLElement).closest('a')) setOpen(null)
@@ -77,11 +85,17 @@ export function MegaMenu({ data }: { data: NavData }) {
                   type="button"
                   aria-expanded={isOpen}
                   aria-controls={`menu-panel-${panel.id}`}
-                  onClick={() => setOpen(isOpen ? null : panel.id)}
+                  onClick={() => {
+                    const keepOpen = isOpen && hoverOpened.current === panel.id
+                    hoverOpened.current = null
+                    if (keepOpen) return
+                    if (isOpen) setOpen(null)
+                    else openPanel(panel.id, 'click')
+                  }}
                   onPointerEnter={(event) => {
                     if (event.pointerType !== 'mouse') return
                     cancelClose()
-                    setOpen(panel.id)
+                    if (!isOpen) openPanel(panel.id, 'hover')
                   }}
                   className={`inline-flex min-h-11 items-center gap-1.5 rounded-full px-3.5 transition ${
                     isOpen ? 'bg-brand-50 text-brand-700' : 'hover:text-brand-600'

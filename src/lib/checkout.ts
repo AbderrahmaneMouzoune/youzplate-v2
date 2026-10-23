@@ -9,8 +9,14 @@ import type Stripe from 'stripe'
  *
  * Fonction pure, séparée de l'appel réseau pour être testée : c'est ici que se
  * joue la règle « le prix vient du serveur, jamais du navigateur ».
+ *
+ * `metadata` s'ajoute au résumé du panier : l'action y range l'identifiant
+ * PostHog du visiteur, que le webhook relit pour attribuer la commande.
  */
-export function buildCheckoutSessionParams(cart: CartLine[]): Stripe.Checkout.SessionCreateParams {
+export function buildCheckoutSessionParams(
+  cart: CartLine[],
+  metadata: Record<string, string> = {}
+): Stripe.Checkout.SessionCreateParams {
   const { lines, tier } = priceCart(cart)
   // La remise de volume est intégrée au prix unitaire : elle reste compatible
   // avec les codes promo Stripe, que l'on ne peut pas cumuler avec `discounts`.
@@ -65,6 +71,7 @@ export function buildCheckoutSessionParams(cart: CartLine[]): Stripe.Checkout.Se
     metadata: {
       cart: lines.map(({ plate, quantity }) => `${plate.platform}x${quantity}`).join(','),
       volume_tier: tier ? tier.label : 'aucun',
+      ...metadata,
     },
     success_url: `${SITE.url}/commande/confirmation?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${SITE.url}/panier`,

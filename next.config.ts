@@ -16,6 +16,26 @@ const nextConfig: NextConfig = {
       },
     },
   },
+  // Proxy PostHog : le navigateur envoie ses événements à `/ingest`, sur notre
+  // domaine, ce qui évite qu'un bloqueur de publicité ne les supprime.
+  // `beforeFiles` : passe avant les routes dynamiques `/[slug]/[metier]`.
+  async rewrites() {
+    return {
+      beforeFiles: [
+        {
+          source: '/ingest/static/:path*',
+          destination: 'https://eu-assets.i.posthog.com/static/:path*',
+        },
+        {
+          source: '/ingest/array/:path*',
+          destination: 'https://eu-assets.i.posthog.com/array/:path*',
+        },
+        { source: '/ingest/:path*', destination: 'https://eu.i.posthog.com/:path*' },
+      ],
+    }
+  },
+  // Les appels de PostHog se terminent parfois par un slash : pas de redirection.
+  skipTrailingSlashRedirect: true,
   async redirects() {
     // Anciennes URLs : boutique youzoune.com (`/produits/…`) et première version
     // de cette boutique (`/plaques/…`). Les slugs renommés d'abord, puis les règles génériques.
@@ -24,6 +44,9 @@ const nextConfig: NextConfig = {
       ['plaque-tripadvisor', 'plaque-avis-tripadvisor'],
     ]
     return [
+      // `skipTrailingSlashRedirect` (pour PostHog) coupe la redirection native :
+      // on la rétablit pour tout le site sauf `/ingest`, une seule URL par page.
+      { source: '/:path((?!ingest/).*[^/])/', destination: '/:path', permanent: true },
       ...renamed.flatMap(([from, to]) => [
         { source: `/produits/${from}`, destination: `/${to}`, permanent: true },
         { source: `/plaques/${from}`, destination: `/${to}`, permanent: true },

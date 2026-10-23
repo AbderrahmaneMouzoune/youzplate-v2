@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import posthog from 'posthog-js'
 import { useState } from 'react'
 
 import { TapScene } from '@/components/tap-scene'
@@ -30,7 +31,14 @@ export function HeroPicker({ children }: { children: React.ReactNode }) {
                   key={item.slug}
                   type="button"
                   aria-pressed={active}
-                  onClick={() => setSlug(item.slug)}
+                  onClick={() => {
+                    setSlug(item.slug)
+                    posthog.capture('platform_selected', {
+                      plate_slug: item.slug,
+                      platform: item.platform,
+                      goal: item.goal,
+                    })
+                  }}
                   className={`inline-flex min-h-11 items-center gap-2 rounded-full border px-4 text-[15px] font-semibold transition ${
                     active
                       ? 'border-ink bg-ink text-white'

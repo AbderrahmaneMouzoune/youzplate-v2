@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
+import posthog from 'posthog-js'
 import { useEffect, useRef, useState, type MouseEvent } from 'react'
 
 import { RESOURCES, type NavData } from '@/components/nav-data'
@@ -43,7 +44,10 @@ export function MobileMenu({ data }: { data: NavData }) {
         type="button"
         aria-expanded={open}
         aria-controls="menu-mobile"
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          setOpen(true)
+          posthog.capture('nav_menu_opened', { menu: 'mobile', panel: 'all', trigger: 'click' })
+        }}
         className="grid size-11 place-items-center rounded-full border border-line"
       >
         <span className="sr-only">Ouvrir le menu</span>

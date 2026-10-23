@@ -1,3 +1,4 @@
+import { CookiePreferencesButton } from '@/components/cookie-consent'
 import { LegalPage } from '@/components/legal-page'
 import { LEGAL_ENTITY, SITE } from '@/config/site'
 
@@ -18,6 +19,11 @@ const PROCESSORS = [
     name: 'Vercel Inc.',
     purpose: 'Hébergement du site',
     location: 'États-Unis (clauses contractuelles types)',
+  },
+  {
+    name: 'PostHog Inc.',
+    purpose: 'Mesure d’audience et suivi des erreurs du site',
+    location: 'Union européenne (hébergement à Francfort)',
   },
   {
     name: 'Resend',
@@ -45,6 +51,24 @@ export default function PrivacyPage() {
       <p>
         Le panier est enregistré dans le stockage local de votre navigateur, sans cookie ni envoi à
         nos serveurs avant le paiement. Le site n’utilise aucun cookie publicitaire.
+      </p>
+
+      <h2>Mesure d’audience et cookies</h2>
+      <p>
+        Nous utilisons PostHog, hébergé dans l’Union européenne, pour savoir quelles pages sont
+        consultées, quelles plaques sont ajoutées au panier et où le parcours d’achat décroche.
+        Aucune donnée de commande personnelle (nom, e-mail, adresse, téléphone) n’y est envoyée :
+        seulement les plaques, les quantités et les montants.
+      </p>
+      <p>
+        Tant que vous n’avez pas fait de choix, ou si vous refusez, la mesure est anonyme : aucun
+        cookie ni stockage local n’est déposé et vous ne pouvez pas être reconnu d’une visite à
+        l’autre. Si vous acceptez, un cookie PostHog (12 mois) rattache vos pages vues à une même
+        visite et permet l’enregistrement de session, où les champs saisis sont masqués. Base légale
+        : votre consentement, que vous pouvez retirer à tout moment.
+      </p>
+      <p>
+        <CookiePreferencesButton className="font-semibold text-brand-600 underline" />
       </p>
 
       <h2>Sous-traitants</h2>

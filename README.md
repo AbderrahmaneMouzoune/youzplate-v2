@@ -45,6 +45,7 @@ sont redirigées en 308 dans `next.config.ts`.
 | Confirmation client      | `/commande/confirmation?session_id=…`                                                   |
 | Pages métier             | `src/data/metiers/*.ts` : une entrée = une page, contenu propre au métier               |
 | Guides                   | `src/config/guides.ts` → articles du blog youzoune.com                                  |
+| Mesure d'audience        | PostHog, voir `posthog-setup-report.md` (événements, consentement, dashboard)           |
 
 Le navigateur n'envoie jamais de prix : le serveur relit le catalogue et recalcule la remise à
 chaque paiement. Il n'y a pas de base de données, Stripe est le registre des commandes.
@@ -67,7 +68,9 @@ sitemap et le maillage se mettent à jour seuls. Le contenu doit rester propre a
 3. **Resend** : `RESEND_API_KEY`, `ORDER_EMAIL_FROM` (domaine vérifié), `ORDER_EMAIL_TO`.
 4. **Google Merchant Center** : déclarer le flux `https://<domaine>/merchant-feed.xml`.
 5. **Search Console** : déclarer le domaine et le sitemap `https://<domaine>/sitemap.xml`.
-6. **Vitrine** : renseigner `NEXT_PUBLIC_YOUZPLATE_URL` sur youzoune-vitrine pour que les
+6. **PostHog** : `NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN` (clé publique `phc_…` du projet Youzplate,
+   eu.posthog.com → Project settings), en Production et Preview. Lue au build : redéployer après.
+7. **Vitrine** : renseigner `NEXT_PUBLIC_YOUZPLATE_URL` sur youzoune-vitrine pour que les
    anciennes URLs (`/youzplate`, `/produits/plaque-*`) et les articles renvoient vers la boutique.
 
 ## À valider avant le lancement
