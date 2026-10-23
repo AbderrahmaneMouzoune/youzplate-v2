@@ -13,8 +13,14 @@ describe('normalizeSiteUrl', () => {
     expect(normalizeSiteUrl("'youzplate.fr/'")).toBe('https://youzplate.fr')
   })
 
+  test('passe http:// en https:// hors local', () => {
+    expect(normalizeSiteUrl('http://www.youzplate.fr')).toBe('https://www.youzplate.fr')
+    expect(normalizeSiteUrl('HTTP://youzplate.fr/')).toBe('https://youzplate.fr')
+  })
+
   test('garde http:// en local et laisse vide ce qui est vide', () => {
     expect(normalizeSiteUrl('http://localhost:3000')).toBe('http://localhost:3000')
+    expect(normalizeSiteUrl('http://127.0.0.1:3123')).toBe('http://127.0.0.1:3123')
     expect(normalizeSiteUrl('   ')).toBeUndefined()
     expect(normalizeSiteUrl(undefined)).toBeUndefined()
   })
