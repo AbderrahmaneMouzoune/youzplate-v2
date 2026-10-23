@@ -1,5 +1,6 @@
 'use client'
 
+import posthog from 'posthog-js'
 import { useState } from 'react'
 
 import { PlateVisual } from '@/components/plate-visual'
@@ -36,7 +37,14 @@ export function ProductGallery({ plate }: { plate: Plate }) {
             key={item.id}
             type="button"
             aria-pressed={view === item.id}
-            onClick={() => setView(item.id)}
+            onClick={() => {
+              setView(item.id)
+              posthog.capture('product_view_changed', {
+                plate_slug: plate.slug,
+                platform: plate.platform,
+                view: item.id,
+              })
+            }}
             className={`min-h-12 rounded-2xl border-2 font-semibold transition ${
               view === item.id
                 ? 'border-ink bg-ink text-white'

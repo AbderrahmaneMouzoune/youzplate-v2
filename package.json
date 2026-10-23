@@ -14,8 +14,11 @@
     "check": "bun run typecheck && bun run lint && bun run format:check && bun run test"
   },
   "dependencies": {
+    "@posthog/nextjs-config": "^1.11.6",
     "@t3-oss/env-nextjs": "^0.13.11",
     "next": "16.4.1",
+    "posthog-js": "^1.438.21",
+    "posthog-node": "^5.57.1",
     "qrcode": "^1.5.4",
     "react": "19.3.0",
     "react-dom": "19.3.0",
@@ -43,6 +46,7 @@
     "unrs-resolver"
   ],
   "trustedDependencies": [
+    "@posthog/cli",
     "sharp",
     "unrs-resolver"
   ]

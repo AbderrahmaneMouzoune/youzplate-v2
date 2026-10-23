@@ -91,6 +91,11 @@ export const cart = {
   clear() {
     commit(EMPTY)
   },
+  /** Contenu actuel, hors rendu React (mesure d'audience dans les gestionnaires d'événements). */
+  lines(): CartLine[] {
+    ensureLoaded()
+    return lines
+  },
 }
 
 export function useCart(): CartLine[] {

@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import posthog from 'posthog-js'
 import { useActionState, useSyncExternalStore } from 'react'
 
 import { startCheckout, type CheckoutState } from '@/app/actions/checkout'
@@ -8,6 +9,12 @@ import { PlateVisual } from '@/components/plate-visual'
 import { QuantityInput } from '@/components/quantity-input'
 import { PLATES } from '@/config/catalog'
 import { CART_LIMITS, SHIPPING, VAT_MENTION } from '@/config/site'
+import {
+  attachPostHogIdentity,
+  cartProperties,
+  plateProperties,
+  trackAddToCart,
+} from '@/lib/analytics'
 import { priceCart } from '@/lib/cart'
 import { cart, useCart } from '@/lib/cart-store'
 import { formatPrice } from '@/lib/format'
@@ -129,13 +136,29 @@ export function CartView() {
                     value={quantity}
                     min={1}
                     max={CART_LIMITS.maxQuantityPerLine}
-                    onChange={(next) => cart.setQuantity(plate.slug, next)}
+                    onChange={(next) => {
+                      cart.setQuantity(plate.slug, next)
+                      posthog.capture('cart_quantity_changed', {
+                        ...plateProperties(plate.slug),
+                        previous_quantity: quantity,
+                        quantity: next,
+                        ...cartProperties(),
+                      })
+                    }}
                     label={`Quantité de ${plate.name}`}
                   />
                   <span className="w-20 text-right font-semibold">{formatPrice(lineTotal)}</span>
                   <button
                     type="button"
-                    onClick={() => cart.remove(plate.slug)}
+                    onClick={() => {
+                      cart.remove(plate.slug)
+                      posthog.capture('product_removed_from_cart', {
+                        ...plateProperties(plate.slug),
+                        quantity,
+                        value: lineTotal / 100,
+                        ...cartProperties(),
+                      })
+                    }}
                     className="text-sm text-muted underline hover:text-ink"
                   >
                     Retirer
@@ -164,7 +187,10 @@ export function CartView() {
                   </span>
                   <button
                     type="button"
-                    onClick={() => cart.add(plate.slug, 1)}
+                    onClick={() => {
+                      cart.add(plate.slug, 1)
+                      trackAddToCart([{ slug: plate.slug, quantity: 1 }], 'cart_upsell')
+                    }}
                     aria-label={`Ajouter ${plate.name} pour ${formatPrice(nextUnit(plate.unitAmount))}`}
                     className="min-h-11 shrink-0 rounded-full bg-ink px-4 text-sm font-bold text-white transition hover:bg-brand-700"
                   >
@@ -204,7 +230,16 @@ export function CartView() {
           </div>
         </dl>
 
-        <form action={formAction}>
+        <form
+          action={(formData) => {
+            posthog.capture('checkout_started', {
+              ...cartProperties(lines),
+              plate_slugs: priced.lines.map((line) => line.slug),
+            })
+            attachPostHogIdentity(formData)
+            formAction(formData)
+          }}
+        >
           <input type="hidden" name="cart" value={JSON.stringify(lines)} />
           <button
             type="submit"

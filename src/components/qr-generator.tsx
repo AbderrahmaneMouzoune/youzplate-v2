@@ -1,5 +1,6 @@
 'use client'
 
+import posthog from 'posthog-js'
 import QRCode from 'qrcode'
 import { useState, type FormEvent } from 'react'
 
@@ -54,11 +55,16 @@ export function QrGenerator() {
       QRCode.toString(url, { ...options, type: 'svg' }),
     ])
     setResult({ url, png, svg: `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}` })
+    // Jamais le lien lui-même : seulement s'il ressemble à un lien d'avis Google.
+    posthog.capture('qr_code_generated', {
+      is_google_review_link: looksLikeGoogleReviewLink(url),
+    })
   }
 
   const printPoster = () => {
     if (!result) return
     const poster = window.open('', '_blank', 'width=600,height=800')
+    posthog.capture('qr_poster_printed', { popup_blocked: !poster })
     if (!poster) return
     poster.document
       .write(`<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Affiche avis Google</title>
@@ -139,6 +145,7 @@ h1{font-size:34px;margin:0}.s{color:#e09a00;font-size:30px;letter-spacing:4px}im
               <a
                 href={result.png}
                 download="qr-code-avis-google.png"
+                onClick={() => posthog.capture('qr_code_downloaded', { format: 'png' })}
                 className="inline-flex min-h-12 items-center rounded-full border-2 border-ink px-5 font-bold"
               >
                 PNG
@@ -146,6 +153,7 @@ h1{font-size:34px;margin:0}.s{color:#e09a00;font-size:30px;letter-spacing:4px}im
               <a
                 href={result.svg}
                 download="qr-code-avis-google.svg"
+                onClick={() => posthog.capture('qr_code_downloaded', { format: 'svg' })}
                 className="inline-flex min-h-12 items-center rounded-full border-2 border-ink px-5 font-bold"
               >
                 SVG (vectoriel)

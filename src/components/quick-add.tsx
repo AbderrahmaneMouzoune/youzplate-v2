@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useState } from 'react'
 
+import { trackAddToCart } from '@/lib/analytics'
 import { cart } from '@/lib/cart-store'
 
 import type { PlateSlug } from '@/config/catalog'
@@ -27,6 +28,7 @@ export function QuickAdd({ slug, name }: { slug: PlateSlug; name: string }) {
       type="button"
       onClick={() => {
         cart.add(slug, 1)
+        trackAddToCart([{ slug, quantity: 1 }], 'quick_add')
         setAdded(true)
       }}
       aria-label={`Ajouter ${name} au panier`}

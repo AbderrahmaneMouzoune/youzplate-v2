@@ -1,8 +1,10 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+import posthog from 'posthog-js'
 import { useState } from 'react'
 
+import { plateProperties, trackAddToCart } from '@/lib/analytics'
 import { cart } from '@/lib/cart-store'
 import { formatPrice } from '@/lib/format'
 import { discountedUnitAmount, formatRate, tierFor } from '@/lib/pricing'
@@ -53,7 +55,15 @@ export function BuyBox({ slug, unitAmount }: { slug: PlateSlug; unitAmount: numb
                 type="radio"
                 name="quantite"
                 checked={checked}
-                onChange={() => setQuantity(option.quantity)}
+                onChange={() => {
+                  setQuantity(option.quantity)
+                  posthog.capture('product_quantity_selected', {
+                    ...plateProperties(slug),
+                    quantity: option.quantity,
+                    volume_tier: tier?.label ?? 'aucun',
+                    value: price / 100,
+                  })
+                }}
                 className="size-5 accent-brand-600"
               />
               <span className="flex flex-1 flex-col">
@@ -94,6 +104,7 @@ export function BuyBox({ slug, unitAmount }: { slug: PlateSlug; unitAmount: numb
         onClick={() => {
           setPending(true)
           cart.add(slug, quantity)
+          trackAddToCart([{ slug, quantity }], 'buy_box')
           router.push('/panier')
         }}
         className="flex min-h-15 w-full items-center justify-center rounded-full bg-brand-600 px-6 text-lg font-extrabold text-white shadow-lg shadow-brand-600/30 transition hover:bg-brand-700 disabled:opacity-70"

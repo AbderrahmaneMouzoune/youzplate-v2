@@ -1,13 +1,16 @@
 import { Resend } from 'resend'
 
 import { env } from '@/env'
+import { buildOrderCompletedEvent } from '@/lib/order-analytics'
 import { buildOrderNotification } from '@/lib/order-email'
+import { captureServerEvent, captureServerException } from '@/lib/posthog-server'
 import { getStripe } from '@/lib/stripe'
 
 import type Stripe from 'stripe'
 
 /**
- * Webhook Stripe : à chaque commande payée, prévient l'équipe par e-mail.
+ * Webhook Stripe : à chaque commande payée, prévient l'équipe par e-mail et
+ * enregistre `order_completed` dans PostHog, la source de vérité des ventes.
  *
  * Le reçu client est envoyé par Stripe lui-même (à activer dans le dashboard),
  * et la commande reste consultable dans Stripe : pas de base de données à tenir.
@@ -48,7 +51,18 @@ export async function POST(request: Request) {
       const { data: lineItems } = await stripe.checkout.sessions.listLineItems(session.id, {
         limit: 100,
       })
-      await notifyTeam(session, lineItems)
+      const order = buildOrderCompletedEvent(session, new Date(event.created * 1000))
+      try {
+        await notifyTeam(session, lineItems)
+      } catch (error) {
+        await captureServerException(error, order.distinctId, {
+          stripe_checkout_session_id: session.id,
+        })
+        throw error
+      }
+      // Si l'e-mail échoue, Stripe relivre et l'événement part au nouvel essai ;
+      // son UUID stable évite tout doublon en cas de relivraison.
+      await captureServerEvent(order)
       break
     }
   }

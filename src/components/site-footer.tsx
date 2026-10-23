@@ -1,5 +1,6 @@
 import Link from 'next/link'
 
+import { CookiePreferencesButton } from '@/components/cookie-consent'
 import { Logo } from '@/components/logo'
 import { PLATES } from '@/config/catalog'
 import { SHIPPING, SITE, YOUZOUNE_URL } from '@/config/site'
@@ -77,6 +78,9 @@ export function SiteFooter() {
           </li>
           <li>
             <Link href="/confidentialite">Confidentialité</Link>
+          </li>
+          <li>
+            <CookiePreferencesButton className="hover:text-ink" />
           </li>
         </FooterColumn>
       </div>

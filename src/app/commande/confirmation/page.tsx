@@ -53,7 +53,9 @@ async function OrderSummary({ searchParams }: Props) {
           {paid
             ? `Paiement de ${formatPrice(session.amount_total ?? 0)} reçu. `
             : 'Votre paiement est en cours de validation. '}
-          Un reçu a été envoyé à <strong>{session.customer_details?.email}</strong>.
+          Un reçu a été envoyé à{' '}
+          {/* `ph-no-capture` : l'adresse n'apparaît pas dans les enregistrements de session. */}
+          <strong className="ph-no-capture">{session.customer_details?.email}</strong>.
         </p>
       </div>
 

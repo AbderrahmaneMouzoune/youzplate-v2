@@ -1,5 +1,6 @@
 import { Bricolage_Grotesque, Instrument_Sans } from 'next/font/google'
 
+import { CookieConsent } from '@/components/cookie-consent'
 import { JsonLd } from '@/components/json-ld'
 import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
@@ -58,6 +59,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
         </main>
         <SiteFooter />
+        <CookieConsent />
         <JsonLd
           data={{
             '@context': 'https://schema.org',
