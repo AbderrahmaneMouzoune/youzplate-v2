@@ -1,3 +1,5 @@
+// Ordre voulu : les valeurs par défaut sont posées avant la validation.
+import './src/env-defaults'
 import './src/env'
 
 import type { NextConfig } from 'next'

@@ -1,6 +1,8 @@
 import { createEnv } from '@t3-oss/env-nextjs'
 import { z } from 'zod'
 
+import { normalizeSiteUrl } from './lib/site-url'
+
 export const env = createEnv({
   /**
    * Variables serveur : jamais exposées au navigateur.
@@ -33,8 +35,18 @@ export const env = createEnv({
   },
 
   client: {
-    /** URL publique de la boutique, sans slash final (ex. `https://youzplate.fr`). */
-    NEXT_PUBLIC_SITE_URL: z.string().url(),
+    /**
+     * URL publique de la boutique (ex. `https://youzplate.fr`). Tolère une saisie
+     * sans `https://`, avec espaces ou slash final : voir `normalizeSiteUrl`.
+     */
+    NEXT_PUBLIC_SITE_URL: z.preprocess(
+      normalizeSiteUrl,
+      z
+        .string(
+          'NEXT_PUBLIC_SITE_URL est manquante : indiquez l’URL du site, par exemple https://youzplate.fr'
+        )
+        .url('NEXT_PUBLIC_SITE_URL doit être une URL complète, par exemple https://youzplate.fr')
+    ),
   },
 
   runtimeEnv: {
